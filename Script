@@ -1,0 +1,19 @@
+Import-CSV "C:\Temp\NewUserScript\emailalias.csv" | ForEach-Object {
+    $mailbox = $_.Mailbox
+    $newAlias = $_.NewEmailAddress
+
+    try {
+        # Use -ErrorAction Stop to force errors into the catch block
+        Set-Mailbox $mailbox -EmailAddresses @{add = $newAlias} -ErrorAction Stop
+        Write-Host "➕ Successfully added alias ${newAlias} to mailbox ${mailbox}" -ForegroundColor Green
+    }
+    catch {
+        # Check if the error message indicates the alias already exists.
+        if ($_.Exception.Message -match 'duplicate' -or $_.Exception.Message -match 'already') {
+            Write-Host "⚠️ Alias ${newAlias} is already assigned to mailbox ${mailbox}. Skipping." -ForegroundColor Yellow
+        }
+        else {
+            Write-Host "⚠️ Error adding alias ${newAlias} to mailbox ${mailbox}: $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+}
