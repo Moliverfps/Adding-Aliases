@@ -1,3 +1,5 @@
+Connect-ExchangeoOnline
+
 # Path to your CSV
 $path = 'C:\Temp\NewUserScript\emailalias.csv'
 
